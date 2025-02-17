@@ -1,27 +1,22 @@
 import 'package:get/get.dart';
-import '../models/weather_model.dart';
-import '../services/weather_service.dart';
+import 'package:weather_app/models/weather_model.dart';
+import 'package:weather_app/services/weather_service.dart';
 
 class WeatherController extends GetxController {
-  final WeatherService _weatherService = WeatherService();
-  var weather = Rxn<WeatherModel>();
   var isLoading = false.obs;
-  var errorMessage = "".obs;
+  var errorMessage = ''.obs;
+  var weather = Rxn<Weather>();
 
   void fetchWeather(String city) async {
     try {
-      isLoading.value = true;
-      final data = await _weatherService.fetchWeather(city);
-      if (data != null) {
-        weather.value = data;
-        errorMessage.value = "";
-      } else {
-        errorMessage.value = "Kota tidak ditemukan";
-      }
+      isLoading(true);
+      errorMessage('');
+      final fetchedWeather = await WeatherService().getWeather(city);
+      weather.value = fetchedWeather;
     } catch (e) {
-      errorMessage.value = "Gagal mengambil data";
+      errorMessage("Gagal mengambil data cuaca.");
     } finally {
-      isLoading.value = false;
+      isLoading(false);
     }
   }
 }
